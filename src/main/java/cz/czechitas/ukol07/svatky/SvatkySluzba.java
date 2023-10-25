@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.MonthDay;
 import java.util.List;
@@ -18,10 +19,8 @@ public class SvatkySluzba {
     private final SeznamSvatku seznamSvatku;
 
     public SvatkySluzba() throws IOException {
-        // TODO načíst seznam svátků ze souboru svatky.json
-
-        // Následující řádek po vlastní implementaci smažete.
-        seznamSvatku = null;
+        String jsonContent = Files.readString(cestaKDatum);
+        seznamSvatku = objectMapper.readValue(jsonContent, SeznamSvatku.class);
     }
 
     public List<String> vyhledatSvatkyDnes() {
@@ -36,7 +35,9 @@ public class SvatkySluzba {
         // pomocí metody map() získat z objektu jméno
         // pomocí toList() převést na List
 
-        // Následující řádek po vlastní implementaci smažete.
-        return List.of();
+        return seznamSvatku.getSvatky().stream()
+                .filter(s -> s.getDen().equals(day))
+                .map(Svatek::getJmeno)
+                .toList();
     }
 }
